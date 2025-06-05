@@ -5,12 +5,15 @@ import AuthRoute from './routes/authRoute.js';
 import BranchRoute from './routes/branchRoute.js';
 import AccountRoute from './routes/accountRoute.js';
 import TransactionRoute from './routes/transactionRoute.js';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express()
 
 app.use(express.json())
+
+app.use(cors())
 
 app.get('/',(req,res)=> {
     return res.status(200).json("Hello World")
