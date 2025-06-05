@@ -1,5 +1,4 @@
 import Accounts from "../models/accountSchema.js"
-import Transaction from "../models/transactionSchema.js";
 import Users from "../models/userSchema.js";
 import { generateRandom } from "../services/generateRandom.js";
 
@@ -161,76 +160,4 @@ export const deleteAccountController = async(req,res) => {
     } catch (error) {
         return res.status(500).json({message:error.message})
     }
-}
-
-export const withdraw = async(req,res) => {
-    const {fromCustomerName,toCustomerName,amount} = req.body;
-    if(!fromCustomerName || !toCustomerName || !amount){
-        return res.status(404).json({
-            message:"Please Filled Out in the form field."
-        })
-    }
-    try {
-        const findfromUser = await Users.findById({_id:fromCustomerName})
-        if(!findfromUser){
-            return res.status(404).json({
-                message:"User does not exist."
-            })
-        }
-        if(findfromUser){
-
-            const findAccount = await Accounts.findOne({customerName:findfromUser._id})
-
-            if(findAccount.balance >= amount){
-                const findToUser = await Users.findById({_id:toCustomerName})
-                if(!findToUser){
-                    return res.status(404).json({
-                        message:"Account does not exist."
-                    })
-                }
-                if(findToUser){
-                    const transactionNo = generateRandom(10)
-                    const newWithdraw = await Transaction.create({
-                        transactionNo:transactionNo,
-                        fromCustomerName:findfromUser._id,
-                        toCustomerName:findToUser._id,
-                        transactionType:"Withdraw",
-                        amount:amount,
-                        status:"Pending"
-                    })
-
-                    if(newWithdraw){
-                        const withdraw = findAccount.balance - amount;
-                        const updateFromAccount = await Accounts.findOneAndUpdate({_id:findAccount},{balance:withdraw})
-                        if(updateFromAccount){
-                            const findToAccount = await Accounts.findOne({customerName:findToUser._id})
-                            const plusAmount = findToAccount.balance + amount;
-                            const updateToAccount = await Accounts.findOneAndUpdate({_id:findToAccount},{balance:plusAmount})
-                            if(updateToAccount){
-                                await Transaction.findOneAndUpdate({_id:newWithdraw._id},{status:"Completed"})
-                                return res.status(201).json({
-                                    message:"Payment Successfully."
-                                })
-                            }
-                        }
-                    }
-
-                }
-            }else{
-                return res.status(404).json({
-                    message:`${findfromUser.name}'s amount is low.`
-                })
-            }        
-        }
-    } catch (error) {
-        return res.status(500).json({message:error.message})
-    }
-}
-
-export const deposit = async(req,res) => {
-    return res.status(200).json("Deposit")
-}
-
-export const transfer = async(req,res) => {
-    return res.status(200).json("transfer")
 }
