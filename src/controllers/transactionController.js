@@ -50,6 +50,11 @@ export const postTransaction = async(req,res) => {
             message:"Please Filled Out in the form field."
         })
     }
+    if(amount < 500){
+        return res.status(400).json({
+            message:"Amount is greater than 500"
+        })
+    }
     try {
         const findfromUser = await Users.findById({_id:fromCustomerName})
         if(!findfromUser){
@@ -106,6 +111,50 @@ export const postTransaction = async(req,res) => {
                 })
             }        
         }
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
+
+export const getUserTransaction =  async(req,res) => {
+    const {userId} = req.params;
+    if(!parseInt(userId)){
+        return res.status(404).json({message:"Not Found"})
+    }
+    try {
+        const findUser = await Transaction.find({fromCustomerName:userId})
+        const findToUser = await Transaction.find({toCustomerName:userId})
+        const userlist = [...findUser,...findToUser]
+        const findFromCustomer = userlist.map((transaction)=> transaction.fromCustomerName)
+        const findToCustomer = userlist.map((transaction)=>transaction.toCustomerName)
+        const fromCustomer = await Users.find({_id:findFromCustomer})
+        const toCustomer = await Users.find({_id:findToCustomer})
+        
+
+        const fromCustomerObject = {}
+        fromCustomer.forEach((customer)=>{
+            return fromCustomerObject[customer._id] = customer.name;
+        })
+
+         const toCustomerObject = {}
+        toCustomer.forEach((customer)=>{
+            return toCustomerObject[customer._id] = customer.name;
+        })
+
+        const pastData = userlist.map((transaction)=>{
+            const fromCustomerName = fromCustomerObject[transaction.fromCustomerName] || 'Unknown'
+            const toCustomerName = toCustomerObject[transaction.toCustomerName] || 'Unknown'
+
+            const list = {...transaction.toObject(),fromCustomerName:fromCustomerName,toCustomerName:toCustomerName}
+            delete list.__v;
+            return list;
+        })
+
+        return res.status(200).json({
+            message:'Fetch Transaction Successfully.',
+            length:pastData.length,
+            data:pastData
+        })
     } catch (error) {
         return res.status(500).json({message:error.message})
     }
