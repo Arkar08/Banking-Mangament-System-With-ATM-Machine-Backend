@@ -1,6 +1,7 @@
 import Branch from "../models/branchSchema.js"
 import Users from "../models/userSchema.js"
-
+import { generateToken } from "../utils/generateToken.js"
+import bcrypt from "bcryptjs"
 
 export const getUserController = async(req,res)=> {
     try {
@@ -20,6 +21,7 @@ export const getUserController = async(req,res)=> {
             const list = {...user.toObject(),branch:branch}
             delete list.__v;
             delete list.branchName
+            delete list.password
             return list;
         })
 
@@ -62,19 +64,26 @@ export const postUserController = async(req,res) => {
             return res.status(400).json({message:"Branch Name does not exist."})
         }
 
+        const salt = await bcrypt.genSalt(10)
+        const hash = await bcrypt.hash(password,salt)
+
         const newUsers = await Users.create({
             name:name,
             email:email,
-            password:password,
+            password:hash,
             phoneNumber:phoneNumber,
             role:role,
             branchName:findBranch._id,
             address:address
         })
 
+        const token = await generateToken(newUsers._id,res)
+
         return res.status(201).json({
             message:"Create User Successfully.",
-            data:newUsers
+            token:token,
+            email:newUsers.email,
+            _id:newUsers._id
         })
         
 
@@ -102,6 +111,7 @@ export const getUserIdController = async(req,res) => {
                  const findUserId = {...findUser.toObject(),branch:findBranch.branchName,}
                 delete findUserId.branchName;
                 delete findUserId.__v;
+                delete findUserId.password
 
                 return res.status(200).json({
                     message:"Fetch UserId Successfully.",
@@ -134,6 +144,7 @@ export const patchUserController = async(req,res) => {
                  const patchUser = {...findUserId.toObject(),branch:findBranch.branchName,}
                 delete patchUser.branchName;
                 delete patchUser.__v;
+                delete patchUser.password
 
                 return res.status(200).json({
                     message:"Update User Successfully.",
