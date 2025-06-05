@@ -93,6 +93,10 @@ export const postTransaction = async(req,res) => {
                                 })
                             }
                         }
+                    }else{
+                        return res.status(400).json({
+                            message:"Payment Failed."
+                        })
                     }
 
                 }
