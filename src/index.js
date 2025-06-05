@@ -4,7 +4,6 @@ import UserRoute from './routes/userRoute.js';
 import AuthRoute from './routes/authRoute.js';
 import BranchRoute from './routes/branchRoute.js';
 import AccountRoute from './routes/accountRoute.js';
-import AtmRoute from './routes/atmRoute.js';
 import TransactionRoute from './routes/transactionRoute.js';
 
 dotenv.config();
@@ -24,7 +23,6 @@ app.use("/api/v1/auth",AuthRoute)
 app.use("/api/v1/user",UserRoute)
 app.use("/api/v1/branch",BranchRoute)
 app.use("/api/v1/account",AccountRoute)
-app.use("/api/v1/atm",AtmRoute)
 app.use("/api/v1/transaction",TransactionRoute)
 
 export default app;

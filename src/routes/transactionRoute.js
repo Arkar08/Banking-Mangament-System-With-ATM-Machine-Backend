@@ -1,10 +1,9 @@
 import express from 'express'
-import { getTransactionController, postTransactionController } from '../controllers/transactionController.js';
+import { getTransaction } from '../controllers/transactionController.js';
 
 
 const router =  express.Router()
 
-router.get("/",getTransactionController)
-router.post("/",postTransactionController)
+router.get("/",getTransaction)
 
 export default router;

@@ -7,19 +7,17 @@ const transactionSchema = new mongoose.Schema({
     },
     fromCustomerName:{
         type:mongoose.Schema.Types.ObjectId,
-        refs:"Users"
+        refs:"Users",
+        require:true
     },
     toCustomerName:{
         type:mongoose.Schema.Types.ObjectId,
-        refs:"Users"
-    },
-    atm:{
-        type:mongoose.Schema.Types.ObjectId,
-        refs:"ATM"
+        refs:"Users",
+        require:true
     },
     transactionType:{
         type:String,
-        require:true
+        enum:["Withdraw","Deposit","Transfer"]
     },
     transactionTime:{
         type:Date,

@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:["Customer","Operator","Technician"],
+        enum:["Customer","Bank Staff","Admin"],
         default:"Customer"
     },
     branchName:{

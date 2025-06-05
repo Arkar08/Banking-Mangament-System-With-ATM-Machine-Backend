@@ -4,10 +4,17 @@ import Users from "../models/userSchema.js"
 export const getBranchController = async(req,res) => {
     try {
         const findBranch = await Branch.find({})
+
+        const pastData = findBranch.map((branch)=>{
+            const list = {...branch.toObject()}
+            delete list.__v;
+            return list;
+        })
+
         return res.status(200).json({
             message:"Fetch Branch Successfully.",
-            length:findBranch.length,
-            data:findBranch
+            length:pastData.length,
+            data:pastData
         })
     } catch (error) {
         return res.status(500).json({message:error.message})
@@ -55,9 +62,11 @@ export const getBranchIdController = async(req,res) => {
             })
         }
         if(findBranch){
+             const pastData = {...findBranch.toObject()}
+            delete pastData.__v;
             return res.status(200).json({
                 message:"Fetch Branch Id Successfully.",
-                data:findBranch
+                data:pastData
             })
         }
     } catch (error) {
@@ -82,9 +91,11 @@ export const patchBranchController = async(req,res) => {
             const patchBranch = await Branch.findOneAndUpdate({_id:id},{...req.body})
             if(patchBranch){
                const findBranchId = await Branch.findById({_id:patchBranch._id})
+               const pastData = {...findBranchId.toObject()}
+               delete pastData.__v;
                 return res.status(200).json({
                     message:"Update Branch Successfully.",
-                    data:findBranchId
+                    data:pastData
                 })
             }
         }

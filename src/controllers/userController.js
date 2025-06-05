@@ -5,10 +5,28 @@ import Users from "../models/userSchema.js"
 export const getUserController = async(req,res)=> {
     try {
         const findUser = await Users.find({})
+        const findBranch = findUser.map((user)=> user.branchName)
+        const branch = await Branch.find({_id:findBranch})
+
+        const branchObject = {}
+
+        branch.forEach((branches)=>{
+            return branchObject[branches._id] = branches.branchName;
+        })
+
+
+        const data = findUser.map((user)=>{
+            const branch = branchObject[user.branchName] || 'Unknown'
+            const list = {...user.toObject(),branch:branch}
+            delete list.__v;
+            delete list.branchName
+            return list;
+        })
+
         return res.status(200).json({
             message:"Fetch User successfully.",
             length:findUser.length,
-            data:findUser
+            data:data
         })
     } catch (error) {
         return res.status(500).json({message:error.message})
@@ -66,13 +84,89 @@ export const postUserController = async(req,res) => {
 }
 
 export const getUserIdController = async(req,res) => {
-    return res.status(200).json("get userId")
+    const {id} = req.params;
+    if(!parseInt(id)){
+        return res.status(404).json({message:"Not Found"})
+    }
+    try {
+        const findUser = await Users.findById({_id:id})
+        if(!findUser){
+            return res.status(404).json({
+                message:"User Id does not exist."
+            })
+        }
+        if(findUser){
+            const findBranch = await Branch.findById({_id:findUser.branchName})
+            
+            if(findBranch){
+                 const findUserId = {...findUser.toObject(),branch:findBranch.branchName,}
+                delete findUserId.branchName;
+                delete findUserId.__v;
+
+                return res.status(200).json({
+                    message:"Fetch UserId Successfully.",
+                    data:findUserId
+                })
+            }
+        }
+    } catch (error) {
+         return res.status(500).json({message:error.message})
+    }
 }
 
 export const patchUserController = async(req,res) => {
-    return res.status(200).json("patch user")
+    const {id} = req.params;
+    if(!parseInt(id)){
+        return res.status(404).json({message:"Not Found"})
+    }
+    try {
+        const findUser = await Users.findById({_id:id})
+        if(!findUser){
+            return res.status(404).json({
+                message:"User Id does not exist."
+            })
+        }
+        if(findUser){
+            const updateUser = await Users.findOneAndUpdate({_id:id},{...req.body});
+            if(updateUser){
+                const findBranch = await Branch.findById({_id:updateUser.branchName})
+                const findUserId = await Users.findById({_id:updateUser._id})
+                 const patchUser = {...findUserId.toObject(),branch:findBranch.branchName,}
+                delete patchUser.branchName;
+                delete patchUser.__v;
+
+                return res.status(200).json({
+                    message:"Update User Successfully.",
+                    data:patchUser
+                })
+            }
+        }
+    } catch (error) {
+         return res.status(500).json({message:error.message})
+    }
 }
 
 export const deleteUserController = async(req,res) => {
-    return res.status(200).json("delete user")
+    const {id} = req.params;
+    if(!parseInt(id)){
+        return res.status(404).json({message:"Not Found"})
+    }
+    try {
+        const findUser = await Users.findById({_id:id})
+        if(!findUser){
+            return res.status(404).json({
+                message:"User Id does not exist."
+            })
+        }
+        if(findUser){
+            const deleteUser = await Users.findOneAndDelete({_id:id})
+            if(deleteUser){
+                return res.status(200).json({
+                    message:"Delete User Successfully."
+                })
+            }
+        }
+    } catch (error) {
+         return res.status(500).json({message:error.message})
+    }
 }
