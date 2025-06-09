@@ -36,7 +36,7 @@ export const getUserController = async(req,res)=> {
 }
 
 export const postUserController = async(req,res) => {
-    const {name,email,password,phoneNumber,branchName,role,address} = req.body;
+    const {name,email,password,phoneNumber,branchName,role,address,profile} = req.body;
     if(!name || !email || !password || !branchName){
         return res.status(404).json({message:"Please Filled out in the form field."})
     } 
@@ -68,6 +68,7 @@ export const postUserController = async(req,res) => {
         const hash = await bcrypt.hash(password,salt)
 
         const newUsers = await Users.create({
+            profile:profile,
             name:name,
             email:email,
             password:hash,

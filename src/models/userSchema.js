@@ -2,6 +2,9 @@ import mongoose from "mongoose"
 
 
 const userSchema = new mongoose.Schema({
+    profile:{
+        type:String
+    },
     name:{
         type:String,
         require:true
