@@ -1,5 +1,7 @@
+import Accounts from "../models/accountSchema.js"
 import Branch from "../models/branchSchema.js"
 import Users from "../models/userSchema.js"
+import { generateRandom } from "../services/generateRandom.js"
 import { generateToken } from "../utils/generateToken.js"
 import bcrypt from "bcryptjs"
 
@@ -78,14 +80,24 @@ export const postUserController = async(req,res) => {
             address:address
         })
 
-        const token = await generateToken(newUsers._id,res)
+        if(newUsers){
+            const account = generateRandom(10);
+            await Accounts.create({
+                    accountNo:account,
+                    customerName:newUsers._id,
+                    accountType:'checking'
+            })
+            const token = await generateToken(newUsers._id,res)
 
-        return res.status(201).json({
-            message:"Create User Successfully.",
-            token:token,
-            email:newUsers.email,
-            _id:newUsers._id
-        })
+            return res.status(201).json({
+                message:"Create User Successfully.",
+                token:token,
+                email:newUsers.email,
+                _id:newUsers._id
+            })
+        }
+
+        
         
 
     } catch (error) {
