@@ -109,8 +109,7 @@ export const getUserIdController = async(req,res) => {
             const findBranch = await Branch.findById({_id:findUser.branchName})
             
             if(findBranch){
-                 const findUserId = {...findUser.toObject(),branch:findBranch.branchName,}
-                delete findUserId.branchName;
+                 const findUserId = {...findUser.toObject()}
                 delete findUserId.__v;
                 delete findUserId.password
 
