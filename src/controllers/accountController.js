@@ -1,5 +1,6 @@
 import Accounts from "../models/accountSchema.js"
 import Users from "../models/userSchema.js";
+import generateQrCode from "../services/generateQrCode.js";
 import { generateRandom } from "../services/generateRandom.js";
 
 
@@ -43,6 +44,7 @@ export const postAccountController = async(req,res) => {
 
     try {
         const account = generateRandom(10);
+        const qr =  await generateQrCode(account)
 
         const findAccount = await Accounts.findOne({customerName:customerName})
         if(findAccount){
@@ -57,7 +59,8 @@ export const postAccountController = async(req,res) => {
                     accountNo:account,
                     customerName:findUser._id,
                     accountType:accountType,
-                    balance:balance
+                    balance:balance,
+                    qrCode:qr
                 })
                 return res.status(201).json({
                     message:"Account Create Successfully.",

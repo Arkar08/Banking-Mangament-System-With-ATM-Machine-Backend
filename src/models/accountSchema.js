@@ -18,6 +18,9 @@ const accountSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
+    qrCode:{
+        type:String
+    },
     status:{
         type:String,
         enum:["Active","Inactive"],
