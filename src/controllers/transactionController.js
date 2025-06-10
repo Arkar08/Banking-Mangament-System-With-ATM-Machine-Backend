@@ -56,18 +56,18 @@ export const postTransaction = async(req,res) => {
         })
     }
     try {
-        const findfromUser = await Users.findById({_id:fromCustomerName})
+        const findfromUser = await Accounts.findOne({accountNo:fromCustomerName})
         if(!findfromUser){
             return res.status(404).json({
-                message:"User does not exist."
+                message:"Account does not exist."
             })
         }
         if(findfromUser){
 
-            const findAccount = await Accounts.findOne({customerName:findfromUser._id})
+            // const findAccount = await Accounts.findOne({customerName:findfromUser._id})
 
-            if(findAccount.balance >= amount){
-                const findToUser = await Users.findById({_id:toCustomerName})
+            if(findfromUser.balance >= amount){
+                const findToUser = await Accounts.findOne({accountNo:toCustomerName})
                 if(!findToUser){
                     return res.status(404).json({
                         message:"Account does not exist."
@@ -77,20 +77,19 @@ export const postTransaction = async(req,res) => {
                     const transactionNo = generateRandom(10)
                     const newWithdraw = await Transaction.create({
                         transactionNo:transactionNo,
-                        fromCustomerName:findfromUser._id,
-                        toCustomerName:findToUser._id,
+                        fromCustomerName:findfromUser.customerName,
+                        toCustomerName:findToUser.customerName,
                         transactionType:transactionType,
                         amount:amount,
                         status:"Pending"
                     })
 
                     if(newWithdraw){
-                        const withdraw = findAccount.balance - amount;
-                        const updateFromAccount = await Accounts.findOneAndUpdate({_id:findAccount},{balance:withdraw})
+                        const withdraw = findfromUser.balance - amount;
+                        const updateFromAccount = await Accounts.findOneAndUpdate({_id:findfromUser._id},{balance:withdraw})
                         if(updateFromAccount){
-                            const findToAccount = await Accounts.findOne({customerName:findToUser._id})
-                            const plusAmount = findToAccount.balance + amount;
-                            const updateToAccount = await Accounts.findOneAndUpdate({_id:findToAccount},{balance:plusAmount})
+                            const plusAmount = findToUser.balance + amount;
+                            const updateToAccount = await Accounts.findOneAndUpdate({_id:findToUser._id},{balance:plusAmount})
                             if(updateToAccount){
                                 await Transaction.findOneAndUpdate({_id:newWithdraw._id},{status:"Completed"})
                                 return res.status(201).json({
