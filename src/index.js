@@ -6,10 +6,17 @@ import BranchRoute from './routes/branchRoute.js';
 import AccountRoute from './routes/accountRoute.js';
 import TransactionRoute from './routes/transactionRoute.js';
 import cors from 'cors';
+import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
 
 const app = express()
+
+cloudinary.config({ 
+        cloud_name:process.env.cloudinary_name, 
+        api_key: process.env.cloudinary_key, 
+        api_secret:process.env.cloudinary_secret
+    });
 
 app.use(express.json())
 
