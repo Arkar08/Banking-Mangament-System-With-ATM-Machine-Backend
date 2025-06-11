@@ -43,8 +43,6 @@ export const postAccountController = async(req,res) => {
     }
 
     try {
-        const account = generateRandom(10);
-        const qr = await generateQrCode(`Bank${account}`)
 
         const findAccount = await Accounts.findOne({customerName:customerName})
         if(findAccount){
@@ -53,6 +51,8 @@ export const postAccountController = async(req,res) => {
             })
         }
         if(!findAccount){
+            const account = generateRandom(10);
+            const qr = await generateQrCode(`Bank${account}`)
             const findUser = await Users.findById({_id:customerName})
             if(findUser){
                 const newAccount = await Accounts.create({
