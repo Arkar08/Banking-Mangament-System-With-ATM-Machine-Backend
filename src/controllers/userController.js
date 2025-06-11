@@ -83,13 +83,12 @@ export const postUserController = async(req,res) => {
 
         if(newUsers){
             const account = generateRandom(10);
-            const qr = await generateQrCode(account)
-            const postQr = `Bank${qr}`
+            const qr = await generateQrCode(`Bank${account}`)
             await Accounts.create({
                     accountNo:account,
                     customerName:newUsers._id,
                     accountType:'checking',
-                    qrCode:postQr
+                    qrCode:qr
             })
             const token = await generateToken(newUsers._id,res)
 
