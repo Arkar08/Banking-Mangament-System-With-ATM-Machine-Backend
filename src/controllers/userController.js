@@ -56,7 +56,10 @@ export const postUserController = async(req,res) => {
         if(password.length <= 6){
             return res.status(400).json({message:"Password should be greather than 6."})
         }
-
+        const findPhoneNumber = await Users.findOne({phoneNumber:phoneNumber})
+        if(findPhoneNumber){
+            return res.status(400).json({message:"PhoneNumber is already exist."})
+        }
         if(phoneNumber.length > 11){
             return res.status(400).json({message:"Phone Number should be less than 12."})
         }
