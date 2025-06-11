@@ -46,6 +46,8 @@ export const postAccountController = async(req,res) => {
         const account = generateRandom(10);
         const qr =  await generateQrCode(account)
 
+        const postQr = `Bank${qr}`
+
         const findAccount = await Accounts.findOne({customerName:customerName})
         if(findAccount){
             return res.status(400).json({
@@ -60,7 +62,7 @@ export const postAccountController = async(req,res) => {
                     customerName:findUser._id,
                     accountType:accountType,
                     balance:balance,
-                    qrCode:qr
+                    qrCode:postQr
                 })
                 return res.status(201).json({
                     message:"Account Create Successfully.",
