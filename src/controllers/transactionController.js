@@ -53,7 +53,7 @@ export const getTransaction = async (req, res) => {
 };
 
 export const postTransaction = async (req, res) => {
-  const { fromCustomerName, toCustomerName, amount, transactionType,cardNo } =
+  const { fromCustomerName, toCustomerName, amount, transactionType } =
     req.body;
   if (!amount || !transactionType) {
     return res.status(404).json({
@@ -148,7 +148,7 @@ export const postTransaction = async (req, res) => {
         }
         if(findCard){
             if(transactionType === 'Deposit'){
-                if(findCard.cardBalance > amount){
+                if(findCard.cardBalance >= amount){
                         const transactionNo = generateRandom(10);
                         const newDeposit = await Transaction.create({
                         transactionNo: transactionNo,
@@ -159,8 +159,15 @@ export const postTransaction = async (req, res) => {
                     });
                     if(newDeposit){
                         const deposit = findfromUser.balance + amount;
+                        const updateAccount = await Accounts.findOneAndUpdate({
+                          _id:findfromUser._id
+                        },{balance:deposit})
                         const cardBalance = findCard.cardBalance - amount;
-                         if (deposit && cardBalance) {
+                        const updateCard = await Card.findOneAndUpdate(
+                            { _id: findCard._id },
+                            { cardBalance: cardBalance }
+                          );
+                         if (updateAccount && updateCard) {
                             await Transaction.findOneAndUpdate(
                             { _id: newDeposit._id },
                             { status: "Completed" }
@@ -174,6 +181,8 @@ export const postTransaction = async (req, res) => {
                     return res.status(400).json({message:"Card Balance is low."})
                 }
             }else{
+              if(findfromUser.balance >= amount){
+                const transactionNo = generateRandom(10);
                  const newWithdraw = await Transaction.create({
                         transactionNo: transactionNo,
                         fromCustomerName: findCard.userId,
@@ -183,8 +192,15 @@ export const postTransaction = async (req, res) => {
                     });
                     if(newWithdraw){
                         const withdraw = findfromUser.balance - amount;
+                         const updateAccount = await Accounts.findOneAndUpdate({
+                          _id:findfromUser._id
+                        },{balance:withdraw})
                         const cardBalance = findCard.cardBalance + amount;
-                         if (withdraw && cardBalance) {
+                         const updateCard = await Card.findOneAndUpdate(
+                            { _id: findCard._id },
+                            { cardBalance: cardBalance }
+                          );
+                         if (updateAccount && updateCard) {
                             await Transaction.findOneAndUpdate(
                             { _id: newWithdraw._id },
                             { status: "Completed" }
@@ -194,6 +210,10 @@ export const postTransaction = async (req, res) => {
                             });
                         }
                     }
+              }else{
+                return res.status(400).json({message:"Your Balance is low."})
+              }
+                
             }
         }
     }

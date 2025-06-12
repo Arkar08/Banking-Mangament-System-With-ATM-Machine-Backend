@@ -13,7 +13,7 @@ const cardSchema = mongoose.Schema({
         require:true
     },
     cardBalance:{
-        type:String,
+        type:Number,
         default:0
     },
     cardExpiryDate:{
