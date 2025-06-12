@@ -31,7 +31,6 @@ const userSchema = new mongoose.Schema({
     branchName:{
         type:mongoose.Schema.Types.ObjectId,
         refs:"Branch",
-        require:true
     },
     address:{
         type:String

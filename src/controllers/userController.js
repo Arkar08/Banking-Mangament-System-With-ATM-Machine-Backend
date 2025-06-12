@@ -128,13 +128,15 @@ export const postUserController = async (req, res) => {
           qrCode: qr,
         });
 
+        const date = newUser.createdAt;
+                    const newDate = new Date(date)
+                    newDate.setFullYear(newDate.getFullYear()+ 5)
+
         await Card.create({
           userId: newUsers._id,
           cardNo: cardNo,
           cardType: "debit card",
-          cardExpiryDate: new Date(
-            newUsers.createdAt.getDate() + 360 * 60 * 60 * 1000
-          ),
+          cardExpiryDate:newDate.toISOString()
         });
         const token = await generateToken(newUsers._id, res);
 
