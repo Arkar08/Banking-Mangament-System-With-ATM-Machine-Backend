@@ -8,12 +8,10 @@ const transactionSchema = new mongoose.Schema({
     fromCustomerName:{
         type:mongoose.Schema.Types.ObjectId,
         refs:"Users",
-        require:true
     },
     toCustomerName:{
         type:mongoose.Schema.Types.ObjectId,
         refs:"Users",
-        require:true
     },
     transactionType:{
         type:String,
