@@ -158,11 +158,11 @@ export const postTransaction = async (req, res) => {
                         status: "Pending",
                     });
                     if(newDeposit){
-                        const deposit = findfromUser.balance + amount;
+                        const deposit = findfromUser.balance - amount;
                         const updateAccount = await Accounts.findOneAndUpdate({
                           _id:findfromUser._id
                         },{balance:deposit})
-                        const cardBalance = findCard.cardBalance - amount;
+                        const cardBalance = findCard.cardBalance + amount;
                         const updateCard = await Card.findOneAndUpdate(
                             { _id: findCard._id },
                             { cardBalance: cardBalance }
@@ -191,11 +191,11 @@ export const postTransaction = async (req, res) => {
                         status: "Pending",
                     });
                     if(newWithdraw){
-                        const withdraw = findfromUser.balance - amount;
+                        const withdraw = findfromUser.balance + amount;
                          const updateAccount = await Accounts.findOneAndUpdate({
                           _id:findfromUser._id
                         },{balance:withdraw})
-                        const cardBalance = findCard.cardBalance + amount;
+                        const cardBalance = findCard.cardBalance - amount;
                          const updateCard = await Card.findOneAndUpdate(
                             { _id: findCard._id },
                             { cardBalance: cardBalance }
@@ -252,7 +252,7 @@ export const getUserTransaction = async (req, res) => {
 
     const pastData = userlist.map((transaction) => {
         const isSender = transaction.fromCustomerName.toString() === userId;
-      const transactionAmount = isSender && transaction.transactionType !== 'Deposit'
+      const transactionAmount = isSender && transaction.transactionType !== 'Withdraw'
         ? "-"+Number(transaction.amount)
         :"+"+Number(transaction.amount);
       const fromCustomerName =
