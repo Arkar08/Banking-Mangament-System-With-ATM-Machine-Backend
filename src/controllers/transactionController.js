@@ -252,7 +252,7 @@ export const getUserTransaction = async (req, res) => {
 
     const pastData = userlist.map((transaction) => {
         const isSender = transaction.fromCustomerName.toString() === userId;
-      const transactionAmount = isSender ||transaction.transactionType === 'Withdraw'
+      const transactionAmount = isSender && transaction.transactionType !== 'Deposit'
         ? "-"+Number(transaction.amount)
         :"+"+Number(transaction.amount);
       const fromCustomerName =

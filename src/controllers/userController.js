@@ -55,6 +55,8 @@ export const postUserController = async (req, res) => {
     role,
     address,
     profile,
+    balance,
+    cardBalance
   } = req.body;
   if (!name || !email || !password) {
     return res
@@ -124,11 +126,12 @@ export const postUserController = async (req, res) => {
         await Accounts.create({
           accountNo: account,
           customerName: newUsers._id,
+          balance:balance,
           accountType: "checking",
           qrCode: qr,
         });
 
-        const date = newUser.createdAt;
+        const date = newUsers.createdAt;
                     const newDate = new Date(date)
                     newDate.setFullYear(newDate.getFullYear()+ 5)
 
@@ -136,7 +139,8 @@ export const postUserController = async (req, res) => {
           userId: newUsers._id,
           cardNo: cardNo,
           cardType: "debit card",
-          cardExpiryDate:newDate.toISOString()
+          cardExpiryDate:newDate.toISOString(),
+          cardBalance:cardBalance
         });
         const token = await generateToken(newUsers._id, res);
 
