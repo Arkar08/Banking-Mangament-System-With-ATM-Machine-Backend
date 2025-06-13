@@ -7,6 +7,7 @@ import AccountRoute from './routes/accountRoute.js';
 import TransactionRoute from './routes/transactionRoute.js';
 import cors from 'cors';
 import { v2 as cloudinary } from 'cloudinary';
+import { authMiddleware } from './middleware/authMiddleware.js';
 
 dotenv.config();
 
@@ -30,9 +31,9 @@ app.get('/',(req,res)=> {
 // routes
 
 app.use("/api/v1/auth",AuthRoute)
-app.use("/api/v1/user",UserRoute)
-app.use("/api/v1/branch",BranchRoute)
-app.use("/api/v1/account",AccountRoute)
-app.use("/api/v1/transaction",TransactionRoute)
+app.use("/api/v1/user",authMiddleware,UserRoute)
+app.use("/api/v1/branch",authMiddleware,BranchRoute)
+app.use("/api/v1/account",authMiddleware,AccountRoute)
+app.use("/api/v1/transaction",authMiddleware,TransactionRoute)
 
 export default app;
