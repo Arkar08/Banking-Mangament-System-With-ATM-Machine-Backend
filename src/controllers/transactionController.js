@@ -53,7 +53,7 @@ export const getTransaction = async (req, res) => {
 };
 
 export const postTransaction = async (req, res) => {
-  const { fromCustomerName, toCustomerName, amount, transactionType } =
+  const { fromCustomerName, toCustomerName, amount, transactionType,notes } =
     req.body;
   if (!amount || !transactionType) {
     return res.status(404).json({
