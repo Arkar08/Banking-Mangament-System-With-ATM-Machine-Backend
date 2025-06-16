@@ -209,20 +209,20 @@ export const getUserIdController = async (req, res) => {
       });
     }
     if (findUser) {
-      if (findUser.role !== "Customer") {
-        const findBranch = await Branch.findById({ _id: findUser.branchName });
+      // if (findUser.role !== "Customer") {
+      //   const findBranch = await Branch.findById({ _id: findUser.branchName });
 
-        if (findBranch) {
-          const findUserId = { ...findUser.toObject() };
-          delete findUserId.__v;
-          delete findUserId.password;
+      //   if (findBranch) {
+      //     const findUserId = { ...findUser.toObject() };
+      //     delete findUserId.__v;
+      //     delete findUserId.password;
 
-          return res.status(200).json({
-            message: "Fetch UserId Successfully.",
-            data: findUserId,
-          });
-        }
-      } else {
+      //     return res.status(200).json({
+      //       message: "Fetch UserId Successfully.",
+      //       data: findUserId,
+      //     });
+      //   }
+      // } else {
         const findCard = await Card.findOne({ userId: findUser._id });
         const card = {...findCard.toObject()}
         delete card.createdAt;
@@ -246,7 +246,7 @@ export const getUserIdController = async (req, res) => {
           data: findUserId,
         });
       }
-    }
+    // }
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
