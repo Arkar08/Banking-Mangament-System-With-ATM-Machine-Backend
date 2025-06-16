@@ -149,7 +149,7 @@ export const postTransaction = async (req, res) => {
         });
       }
       if (findCard) {
-        if (transactionType === "Deposit") {
+        if (transactionType === "Withdraw") {
           if (findCard.cardBalance >= amount) {
             const transactionNo = generateRandom(10);
             const newDeposit = await Transaction.create({
@@ -160,14 +160,14 @@ export const postTransaction = async (req, res) => {
               status: "Pending",
             });
             if (newDeposit) {
-              const deposit = findfromUser.balance - amount;
+              const deposit = findfromUser.balance + amount;
               const updateAccount = await Accounts.findOneAndUpdate(
                 {
                   _id: findfromUser._id,
                 },
                 { balance: deposit }
               );
-              const cardBalance = findCard.cardBalance + amount;
+              const cardBalance = findCard.cardBalance - amount;
               const updateCard = await Card.findOneAndUpdate(
                 { _id: findCard._id },
                 { cardBalance: cardBalance }
@@ -196,14 +196,14 @@ export const postTransaction = async (req, res) => {
               status: "Pending",
             });
             if (newWithdraw) {
-              const withdraw = findfromUser.balance + amount;
+              const withdraw = findfromUser.balance - amount;
               const updateAccount = await Accounts.findOneAndUpdate(
                 {
                   _id: findfromUser._id,
                 },
                 { balance: withdraw }
               );
-              const cardBalance = findCard.cardBalance - amount;
+              const cardBalance = findCard.cardBalance + amount;
               const updateCard = await Card.findOneAndUpdate(
                 { _id: findCard._id },
                 { cardBalance: cardBalance }
