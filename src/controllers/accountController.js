@@ -164,3 +164,21 @@ export const deleteAccountController = async(req,res) => {
         return res.status(500).json({message:error.message})
     }
 }
+
+export const getAccountNoController = async(req,res)=> {
+    const {accountNo} = req.params
+    try {
+        const findAccount = await Accounts.findOne({accountNo:accountNo})
+        if(!findAccount){
+            return res.status(404).json({
+                message:'Account does not exist.'
+            })
+        }
+        return res.status(200).json({
+            message:"Fetch AccountNo successfully.",
+            data:findAccount
+        })
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}

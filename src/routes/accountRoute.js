@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAccountController, getAccountIdController, postAccountController,patchAccountController, deleteAccountController} from '../controllers/accountController.js';
+import { getAccountController, getAccountIdController, postAccountController,patchAccountController, deleteAccountController, getAccountNoController} from '../controllers/accountController.js';
 import { authorizeAdmin } from '../middleware/authMiddleware.js';
 
 
@@ -10,5 +10,6 @@ router.post("/",authorizeAdmin,postAccountController)
 router.get("/:id",getAccountIdController)
 router.patch("/:id",patchAccountController)
 router.delete("/:id",authorizeAdmin,deleteAccountController)
+router.get("/find/:accountNo",getAccountNoController)
 
 export default router;
