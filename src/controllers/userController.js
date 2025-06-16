@@ -224,8 +224,20 @@ export const getUserIdController = async (req, res) => {
         }
       } else {
         const findCard = await Card.findOne({ userId: findUser._id });
+        const card = {...findCard.toObject()}
+        delete card.createdAt;
+        delete card.updatedAt;
+        delete card.__v;
+        delete card._id;
+        delete card.userId;
         const findAccount = await Accounts.findOne({customerName:findUser._id})
-        const findUserId = { ...findUser.toObject(), findCard ,findAccount};
+        const account = {...findAccount.toObject()}
+        delete account.createdAt;
+        delete account.updatedAt;
+        delete account.__v;
+        delete account._id
+        delete account.customerName;
+        const findUserId = { ...findUser.toObject(), card ,account};
         delete findUserId.__v;
         delete findUserId.password;
 
