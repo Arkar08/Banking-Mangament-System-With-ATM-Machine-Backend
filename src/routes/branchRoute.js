@@ -8,7 +8,7 @@ const router =  express.Router()
 router.get("/",authorizeAdmin,getBranchController)
 router.post("/",authorizeAdmin,postBranchController)
 router.get("/:id",authorizeAdmin,getBranchIdController)
-router.patch("/:id",authorizeAdmin,patchBranchController)
+router.put("/:id",authorizeAdmin,patchBranchController)
 router.delete("/:id",authorizeAdmin,deleteBranchController)
 
 export default router;

@@ -9,7 +9,7 @@ const router = express.Router()
 router.get("/",authorizeAdmin,getUserController)
 router.post("/",authorizeAdmin,postUserController)
 router.get("/:id",getUserIdController)
-router.patch("/:id",patchUserController)
+router.put("/:id",patchUserController)
 router.delete("/:id",deleteUserController)
 
 export default router;
