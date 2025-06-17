@@ -223,6 +223,7 @@ export const getUserIdController = async (req, res) => {
       //     });
       //   }
       // } else {
+        const findBranch = await Branch.findOne({_id:findUser.branchName})
         const findCard = await Card.findOne({ userId: findUser._id });
         const card = {...findCard.toObject()}
         delete card.createdAt;
@@ -237,7 +238,7 @@ export const getUserIdController = async (req, res) => {
         delete account.__v;
         delete account._id
         delete account.customerName;
-        const findUserId = { ...findUser.toObject(), card ,account};
+        const findUserId = { ...findUser.toObject(), card ,account,branch:findBranch.branchName};
         delete findUserId.__v;
         delete findUserId.password;
 
